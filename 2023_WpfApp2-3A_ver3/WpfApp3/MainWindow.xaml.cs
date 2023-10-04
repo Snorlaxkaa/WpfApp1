@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -11,9 +11,6 @@ using System.Windows.Media;
 
 namespace WpfApp2
 {
-    /// <summary>
-    /// MainWindow.xaml 的互動邏輯
-    /// </summary>
     public partial class MainWindow : Window
     {
         // 字典，用於儲存飲料名稱和價格
@@ -121,6 +118,7 @@ namespace WpfApp2
             // 在UI上顯示訂單詳細信息
             DisplayOrder(orders);
 
+            // 將訂單寫入文本文件
             SaveOrderToFile(orders);
         }
 
@@ -195,35 +193,7 @@ namespace WpfApp2
             });
             displayTextBlock.Inlines.Add(summaryString);
         }
-        private void SaveOrderToFile(Dictionary<string, int> myOrders)
-        {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "文本文件|*.txt|所有文件|*.*";
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                string filename = saveFileDialog.FileName;
-                try
-                {
-                    using (StreamWriter writer = new StreamWriter(filename, false, Encoding.UTF8))
-                    {
-                        writer.WriteLine("訂單明細:");
-                        foreach (var item in myOrders)
-                        {
-                            string drinkName = item.Key;
-                            int quantity = item.Value;
-                            int price = drinks[drinkName];
-                            writer.WriteLine($"{drinkName} X {quantity}杯，每杯{price}元，總共{price * quantity}元");
-                        }
-                        writer.Close();
-                        MessageBox.Show("訂單已成功儲存到檔案: " + filename, "訂單儲存成功", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("儲存訂單時發生錯誤: " + ex.Message, "錯誤", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
+
         // 將選擇的飲料放入 'orders' 字典
         private void PlaceOrder(Dictionary<string, int> myOrders)
         {
@@ -249,6 +219,33 @@ namespace WpfApp2
             var rb = sender as RadioButton;
             if (rb.IsChecked == true) takeout = rb.Content.ToString();
             //MessageBox.Show(takeout);
+        }
+
+        // 将订单写入文本文件
+        private void SaveOrderToFile(Dictionary<string, int> myOrders)
+        {
+            string filename = @"C:\Users\User\Documents\c#\2023_WpfApp2-3A_ver3\2023_WpfApp2-3A_ver3\WpfApp3\w3.txt"; // 指定文件名
+
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(filename, false, Encoding.UTF8))
+                {
+                    writer.WriteLine("訂單明細:");
+                    foreach (var item in myOrders)
+                    {
+                        string drinkName = item.Key;
+                        int quantity = item.Value;
+                        int price = drinks[drinkName];
+                        writer.WriteLine($"{drinkName} X {quantity}杯，每杯{price}元，總共{price * quantity}元");
+                    }
+                    writer.Close();
+                    MessageBox.Show("訂單已成功儲存到檔案: " + filename, "訂單儲存成功", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("儲存訂單時發生錯誤: " + ex.Message, "錯誤", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }
